@@ -3,6 +3,15 @@
 	"displayName": "Your Mac Dict",
 	"description": "",
 	"version": "0.0.1",
+	"license": "https://github.com/tkkrr/your-mac-dict/blob/master/LICENSE",
+    "homepage": "https://github.com/tkkrr/your-mac-dict/blob/master/README.md",
+    "bugs": {
+        "url": "https://github.com/tkkrr/your-mac-dict/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tkkrr/your-mac-dict.git"
+    },
 	"engines": {
 		"vscode": "^1.41.0"
 	},

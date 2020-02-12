@@ -1,9 +1,9 @@
 const fs = require('fs')
 const zlib = require('zlib')
-
+const vscode = require('vscode')
 
 const pochi = (searchWord) => {
-    const filename = '/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX/7725cba5b321a8308a603a40ac808699175c4aae.asset/AssetData/Sanseido The WISDOM English-Japanese Japanese-English Dictionary.dictionary/Contents/Resources/Body.data'
+    const filename = vscode.workspace.getConfiguration("dictionary").PATH
 
     const content = fs.readFileSync(filename)
 

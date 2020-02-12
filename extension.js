@@ -1,5 +1,4 @@
-const vscode = require('vscode');
-const execSync = require('child_process').execSync
+const vscode = require('vscode')
 const path = require('path')
 
 const xsl = require('./xslt_process')

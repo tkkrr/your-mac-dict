@@ -47,13 +47,13 @@ function activate(context) {
 	console.log('Congratulations, your extension "your-mac-dict" is now active!');
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('extension.start', () => {
+		vscode.commands.registerCommand('YourMacDict.start', () => {
 			CatCodingPanel.createOrShow(context.extensionPath);
 		})
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('extension.doRefactor', () => {
+		vscode.commands.registerCommand('YourMacDict.doRefactor', () => {
 			if (CatCodingPanel.currentPanel) {
 				CatCodingPanel.currentPanel.doRefactor()
 			}
@@ -62,7 +62,7 @@ function activate(context) {
 
 	if (vscode.window.registerWebviewPanelSerializer) {
 		// Make sure we register a serializer in activation event
-		vscode.window.registerWebviewPanelSerializer("catCoding", {
+		vscode.window.registerWebviewPanelSerializer("YourMacDict", {
 			async deserializeWebviewPanel(webviewPanel, state) {
 				console.log(`Got state: ${state}`);
 				CatCodingPanel.revive(webviewPanel, context.extensionPath);
@@ -96,8 +96,8 @@ class CatCodingPanel {
 
 		// Otherwise, create a new panel.
 		const panel = vscode.window.createWebviewPanel(
-			'catCoding',
-			'Cat Coding',
+			'yourMacDict',
+			'YourMacDict',
 			column || vscode.ViewColumn.One,
 			{
 				// Enable javascript in the webview
@@ -183,17 +183,21 @@ class CatCodingPanel {
 		const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
 		const nonce = getNonce()
 
-		let html = xsl.xsltproc( getSearchPhrase() )
+		try{
+			let html = xsl.xsltproc( getSearchPhrase() )
 
-		// WebView とコミュニケーションをとるために <script> を埋め込む
-		let idx = html.search(/<\/body>/)
-		html = html.slice(0, idx) + `<script nonce="${nonce}" src="${scriptUri}"></script>` + html.slice(idx)
-		
-		// To resolve "Content-Security-Policy"
-		idx = html.search(/<meta/)
-		html = html.slice(0, idx) + `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">` + html.slice(idx)
+			// WebView とコミュニケーションをとるために <script> を埋め込む
+			let idx = html.search(/<\/body>/)
+			html = html.slice(0, idx) + `<script nonce="${nonce}" src="${scriptUri}"></script>` + html.slice(idx)
+			
+			// To resolve "Content-Security-Policy"
+			idx = html.search(/<meta/)
+			html = html.slice(0, idx) + `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">` + html.slice(idx)
 
-		return html
+			return html
+		}catch(e){
+			console.log(e)
+		}
 	}
 }
 

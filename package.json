@@ -3,7 +3,7 @@
 	"displayName": "Your Mac Dict",
 	"description": "",
 	"publisher": "tucker",
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"license": "https://github.com/tkkrr/your-mac-dict/blob/master/LICENSE",
 	"homepage": "https://github.com/tkkrr/your-mac-dict/blob/master/README.md",
 	"bugs": {
@@ -20,27 +20,27 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.dict",
-		"onCommand:extension.start",
-		"onCommand:extension.doRefactor",
-		"onWebviewPanel:catCoding"
+		"onCommand:YourMacDict.dict",
+		"onCommand:YourMacDict.start",
+		"onCommand:YourMacDict.doRefactor",
+		"onWebviewPanel:YourMacDict"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.dict",
+				"command": "YourMacDict.dict",
 				"title": "dict"
 			},
 			{
-				"command": "extension.start",
+				"command": "YourMacDict.start",
 				"title": "Start cat coding session",
-				"category": "Cat Coding"
+				"category": "YourMacDict"
 			},
 			{
-				"command": "extension.doRefactor",
+				"command": "YourMacDict.doRefactor",
 				"title": "Do some refactoring",
-				"category": "Cat Coding"
+				"category": "YourMacDict"
 			}
 		],
 		"configuration": {

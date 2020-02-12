@@ -5,14 +5,14 @@
 	"publisher": "tucker",
 	"version": "0.0.1",
 	"license": "https://github.com/tkkrr/your-mac-dict/blob/master/LICENSE",
-    "homepage": "https://github.com/tkkrr/your-mac-dict/blob/master/README.md",
-    "bugs": {
-        "url": "https://github.com/tkkrr/your-mac-dict/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/tkkrr/your-mac-dict.git"
-    },
+	"homepage": "https://github.com/tkkrr/your-mac-dict/blob/master/README.md",
+	"bugs": {
+		"url": "https://github.com/tkkrr/your-mac-dict/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tkkrr/your-mac-dict.git"
+	},
 	"engines": {
 		"vscode": "^1.41.0"
 	},
@@ -20,7 +20,10 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.dict"
+		"onCommand:extension.dict",
+		"onCommand:extension.start",
+		"onCommand:extension.doRefactor",
+		"onWebviewPanel:catCoding"
 	],
 	"main": "./extension.js",
 	"contributes": {
@@ -28,6 +31,16 @@
 			{
 				"command": "extension.dict",
 				"title": "dict"
+			},
+			{
+				"command": "extension.start",
+				"title": "Start cat coding session",
+				"category": "Cat Coding"
+			},
+			{
+				"command": "extension.doRefactor",
+				"title": "Do some refactoring",
+				"category": "Cat Coding"
 			}
 		]
 	},

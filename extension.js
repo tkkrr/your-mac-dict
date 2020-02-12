@@ -2,6 +2,7 @@ const vscode = require('vscode');
 const execSync = require('child_process').execSync
 const path = require('path')
 
+const xsl = require('./xslt_process')
 
 
 const getSearchPhrase = () => {
@@ -46,35 +47,190 @@ const getSearchPhrase = () => {
 function activate(context) {
 	console.log('Congratulations, your extension "your-mac-dict" is now active!');
 
-	let disposable = vscode.commands.registerCommand('extension.dict', function () {
-		// The code you place here will be executed every time your command is executed
-		// const child = exec(
-		// 	"python3 /Users/tucker/Desktop/test_test/your-mac-dict/hoge.py human",
-			// function (error, stdout, stderr) {
-			// 	console.log(stdout)
-			// 	console.log(stderr)
-			// 	if (error !== null) {
-			// 		console.log('exec error: ' + error)
-			// 	}
-			// 	return stdout
-			// }
-		// )
-		const word = getSearchPhrase()
+	// let disposable = vscode.commands.registerCommand('extension.dict', function () {
+	// 	const word = getSearchPhrase()
 
-		const pypath = path.resolve(__dirname, "hoge.py") 
-		console.log( pypath )
+	// 	const pypath = path.resolve(__dirname, "hoge.py") 
 		
-		const cmd = ["python3", pypath, word].join(" ")
+	// 	// we will implementation on webView
+	// 	const cmd = ["python3", pypath, word].join(" ")
 
-		const child = execSync(cmd).toString()
-		vscode.window.showInformationMessage(child);
-	});
+	// 	let child
+	// 	try {
+	// 		child = execSync(cmd).toString()
+	// 	}catch(e){
+	// 		console.log(e)
+	// 	}
 
-	context.subscriptions.push(disposable);
+	// 	vscode.window.showInformationMessage(child);
+	// });
+
+	// context.subscriptions.push(disposable);
+
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('extension.start', () => {
+			CatCodingPanel.createOrShow(context.extensionPath);
+		})
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('extension.doRefactor', () => {
+			if (CatCodingPanel.currentPanel) {
+				console.log(CatCodingPanel.currentPanel)
+				console.log("start")
+				CatCodingPanel.currentPanel.doRefactor()
+				console.log("end")
+			}
+		})
+	);
+
+	if (vscode.window.registerWebviewPanelSerializer) {
+		// Make sure we register a serializer in activation event
+		vscode.window.registerWebviewPanelSerializer("catCoding", {
+			async deserializeWebviewPanel(webviewPanel, state) {
+				console.log(`Got state: ${state}`);
+				CatCodingPanel.revive(webviewPanel, context.extensionPath);
+			}
+		});
+	}
+
+		
 }
 exports.activate = activate;
 
 function deactivate() {}
+
+
+/**
+ * Manages cat coding webview panels
+ */
+class CatCodingPanel {
+	static CurrentPanel = undefined
+
+	static createOrShow(extensionPath) {
+		const column = vscode.window.activeTextEditor
+			? vscode.window.activeTextEditor.viewColumn
+			: undefined;
+
+		// If we already have a panel, show it.
+		if (CatCodingPanel.currentPanel) {
+			CatCodingPanel.currentPanel._panel.reveal(column);
+			return;
+		}
+
+		// Otherwise, create a new panel.
+		const panel = vscode.window.createWebviewPanel(
+			'catCoding',
+			'Cat Coding',
+			column || vscode.ViewColumn.One,
+			{
+				// Enable javascript in the webview
+				enableScripts: true,
+
+				// And restrict the webview to only loading content from our extension's `media` directory.
+				localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
+			}
+		);
+
+		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath);
+	}
+
+	static revive(panel, extensionPath) {
+		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath);
+	}
+
+	constructor(panel, extensionPath) {
+		this._panel = panel;
+		this._extensionPath = extensionPath;
+		this._disposables = []
+		
+
+		// Set the webview's initial html content
+		this._update();
+
+		// Listen for when the panel is disposed
+		// This happens when the user closes the panel or when the panel is closed programatically
+		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+
+		// Update the content based on view changes
+		this._panel.onDidChangeViewState( e => {
+			
+			if (this._panel.visible) {
+				this._update();
+			}
+		}, null, this._disposables)
+
+		// Handle messages from the webview
+		this._panel.webview.onDidReceiveMessage( message => {
+			vscode.window.showErrorMessage(message.text);
+			switch (message.command) {
+				case 'alert':
+					vscode.window.showErrorMessage(message.text);
+					return;
+			}
+		}, null, this._disposables );
+	}
+
+	doRefactor() {
+		// Send a message to the webview webview.
+		// You can send any JSON serializable data.
+		this._panel.webview.postMessage({ command: 'refactor' });
+	}
+
+	dispose() {
+		CatCodingPanel.currentPanel = undefined;
+
+		// Clean up our resources
+		this._panel.dispose();
+
+		while (this._disposables.length) {
+			const x = this._disposables.pop();
+			if (x) {
+				x.dispose();
+			}
+		}
+	}
+
+	_update() {
+		const webview = this._panel.webview;
+
+		this._panel.title = "Your Mac Dict"
+		this._panel.webview.html = this._getHtml(webview);
+
+		return
+	}
+
+	_getHtml(webview) {
+		const scriptPathOnDisk = vscode.Uri.file(
+			path.join(this._extensionPath, 'media', 'main.js')
+		);
+		const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
+		const nonce = getNonce()
+
+		let html = xsl.xsltproc()
+
+		// WebView とコミュニケーションをとるために <script> を埋め込む
+		let idx = html.search(/<\/body>/)
+		html = html.slice(0, idx) + `<script nonce="${nonce}" src="${scriptUri}"></script>` + html.slice(idx)
+		
+		// To resolve "Content-Security-Policy"
+		idx = html.search(/<meta/)
+		html = html.slice(0, idx) + `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">` + html.slice(idx)
+
+		return html
+	}
+}
+
+// create one-time token
+function getNonce() {
+	let text = '';
+	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	for (let i = 0; i < 32; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
+}
 
 module.exports = {
 	activate,

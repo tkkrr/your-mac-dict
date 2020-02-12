@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="style.xsl" ?>
+<dictionary>
+
+    <d:entry xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng" id="WDJE44wa0004290" d:title="ワンルームマンション" class="entry">
+        <span class="hwg x_xh0">
+            <span role="text" d:prn="1" d:dhw="1" class="hw">ワンルームマンション<d:prn></d:prn></span>
+        </span>
+        <span id="WDJE44wa0004290_00_00" class="gramb x_xd0">
+            <span class="x_xdh"></span>
+            <span class="semb x_xd1">
+                <span class="x_xdh"></span>
+                <span class="trgg x_xd2">
+                    <span d:def="1" class="trg">
+                        <span class="oup_label x_ni">｟米｠ </span>
+                        <span class="trans ty_訳語">
+                            <span class="art">a </span> one-room apartment, <span class="art">a </span> studio
+                        </span>
+                        <span class="grnote"> (<span class="lbl">!</span>apartment) </span>
+                        <d:def></d:def>
+                    </span>
+                    <span class="gp">; </span>
+                    <span class="trg">
+                        <span class="oup_label x_ni">｟英｠ </span>
+                        <span class="trans ty_訳語">
+                            <span class="art">a </span> studio (flat), <span class="art">a </span> bed-sitter, <span class="oup_label x_ni">｟英話｠ </span><span class="art">a </span> bed-sit<span class="gp">. </span>
+                        </span>
+                        <span class="xrg">（<span class="xr"><a href="x-dictionary:r:WDJE31ma0008170:com.apple.dictionary.ja-en.WISDOM" title="マンション" ty="項目">⇨マンション</a></span>）</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </d:entry>
+
+
+
+
+    <d:entry xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng" id="WDJE44wa0004300" d:title="わんわん" class="entry">
+        <span class="hwg x_xh0">
+            <span role="text" d:prn="1" d:dhw="1" class="hw">わんわん<d:prn></d:prn></span>
+        </span>
+        <span id="WDJE44wa0004300_00_01" class="gramb x_xd0 hasSn">
+            <span class="x_xdh">
+                <span class="sn">1 </span>
+                <span class="ind">【犬の鳴き声】</span>
+            </span>
+            <span class="semb x_xd1">
+                <span class="x_xdh"></span>
+                <span class="trgg x_xd2">
+                    <span d:def="1" class="trg">
+                        <span class="trans ty_訳語">
+                            bowwow <span class="pr"> | <span d:pr="US solitary" class="ph ty_発音">bàʊwáʊ</span> | </span>
+                        </span>
+                        <d:def></d:def>
+                    </span>
+                    <span class="gp">; </span>
+                    <span class="trg">
+                        <span class="ind">【ウー(といううなり声)】</span>
+                        <span class="trans ty_訳語">woof </span>
+                        <span class="pr"> | <span d:pr="US solitary" class="ph ty_発音">wʊf</span> | </span>
+                        <span class="gp">. </span>
+                    </span>
+                </span>
+            </span>
+            <span class="semb x_xd1 ty_no_trans">
+                <span class="x_xdh"></span>
+                <span class="exg x_xd2 hasSn">
+                    <span class="x_xdh"><span class="sn">▸ </span><span class="ex">わんわんほえる </span></span>
+                    <span class="trg x_xd3">
+                        <span class="trans ty_訳文">bark </span>
+                        <span class="gp ty_no-margin">｟</span>
+                        <span class="tp">at</span>
+                        <span class="gp ty_no-margin">｠</span>
+                        <span class="gp">. </span>
+                    </span>
+                </span>
+            </span>
+        </span>
+
+        <span id="WDJE44wa0004300_00_02" class="gramb x_xd0 hasSn ty_no_trans">
+            <span class="x_xdh">
+                <span class="sn">2 </span>
+                <span class="ind">【人の泣き声】</span>
+            </span>
+            <span class="semb x_xd1 ty_no_trans">
+                <span class="x_xdh"></span>
+                <span class="exg x_xd2 hasSn">
+                    <span class="x_xdh"><span class="sn">▸ </span><span class="ex">わんわん泣く </span></span>
+                    <span class="trg x_xd3">
+                        <span class="trans ty_訳文">cry one's heart out </span>
+                        /
+                        <span class="trans ty_訳文">wail<span class="gp">. </span></span>
+                    </span>
+                </span>
+            </span>
+        </span>
+
+        <span id="WDJE44wa0004300_00_03" class="gramb x_xd0 hasSn">
+            <span class="x_xdh">
+                <span class="sn">3 </span>
+                <span class="ind">【犬】</span>
+            </span>
+            <span class="semb x_xd1">
+                <span class="x_xdh"></span>
+                <span class="trgg x_xd2">
+                    <span d:def="1" class="trg">
+                        <span class="oup_label x_ni">｟幼児語｠ </span>
+                        <span class="trans ty_訳語">
+                            <span class="art">a </span> doggy <span class="grnote"> (<span class="lbl">!</span>a doggie ともつづる ) </span>
+                        </span>
+                        <d:def></d:def>
+                    </span>
+                    <span class="gp">; </span>
+                    <span class="trg">
+                        <span class="trans ty_訳語">
+                            <span class="art">a </span> b<span class="str">ó</span>ww<span class="str">ò</span>w<span class="gp">. </span>
+                        </span>
+                        <span class="grnote"> (<span class="lbl">!</span>(犬に) ワン!(と鳴け) Speak!) </span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </d:entry>
+
+    <d:entry xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng" id="WDEJ_a0000020" d:title="A" class="entry">
+        <span class="hwg x_xh0">
+            <span role="text" d:dhw="1" normalized="A" class="hw">A </span>
+            <span class="hm">1</span>
+        </span>
+        <span id="WDEJ_a0000020_01" class="gramb x_xd0">
+            <span class="x_xdh"></span>
+            <span id="WDEJ_a0000020_01_00_01" ord="0" class="semb x_xd1">
+                <span class="x_xdh"></span>
+                <span d:def="1" class="trg x_xd2">
+                    <span class="trans">ampere</span>
+                    <span class="gp">; </span>
+                    <span class="trans">angstrom</span>
+                    <span class="gp">; </span>
+                    <span class="trans">answer<span class="gp">.</span></span>
+                    <d:def></d:def>
+                </span>
+            </span>
+        </span>
+    </d:entry>
+
+
+</dictionary>

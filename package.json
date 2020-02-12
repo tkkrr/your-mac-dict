@@ -3,7 +3,7 @@
 	"displayName": "Your Mac Dict",
 	"description": "",
 	"publisher": "tucker",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"license": "https://github.com/tkkrr/your-mac-dict/blob/master/LICENSE",
 	"homepage": "https://github.com/tkkrr/your-mac-dict/blob/master/README.md",
 	"bugs": {
@@ -47,12 +47,12 @@
 			"title": "YourMacDict",
 			"properties": {
 				"dictionary.PATH": {
-				  "type": "string",
-				  "scope": "resource",
-				  "default": "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX/7725cba5b321a8308a603a40ac808699175c4aae.asset/AssetData/Sanseido The WISDOM English-Japanese Japanese-English Dictionary.dictionary/Contents/Resources/Body.data",
-				  "description": "You must setting path to dictionary"
+					"type": "string",
+					"scope": "resource",
+					"default": "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX/7725cba5b321a8308a603a40ac808699175c4aae.asset/AssetData/Sanseido The WISDOM English-Japanese Japanese-English Dictionary.dictionary/Contents/Resources/Body.data",
+					"description": "You must setting path to dictionary"
 				}
-			  }
+			}
 		}
 	},
 	"scripts": {
@@ -69,7 +69,9 @@
 		"glob": "^7.1.6",
 		"mocha": "^7.0.1",
 		"typescript": "^3.7.5",
-		"vscode-test": "^1.3.0",
+		"vscode-test": "^1.3.0"
+	},
+	"dependencies": {
 		"tmp": "^0.1.0"
 	}
 }

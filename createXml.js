@@ -2,20 +2,16 @@ const fs = require('fs')
 const zlib = require('zlib')
 
 
+const pochi = (searchWord) => {
+    const filename = '/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX/7725cba5b321a8308a603a40ac808699175c4aae.asset/AssetData/Sanseido The WISDOM English-Japanese Japanese-English Dictionary.dictionary/Contents/Resources/Body.data'
 
-const filename = '/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX/7725cba5b321a8308a603a40ac808699175c4aae.asset/AssetData/Sanseido The WISDOM English-Japanese Japanese-English Dictionary.dictionary/Contents/Resources/Body.data'
+    const content = fs.readFileSync(filename)
 
-console.log('<?xml version="1.0" encoding="UTF-8"?>')
-console.log('<?xml-stylesheet type="text/xsl" href="style.xsl" ?>')
-console.log('<dictionary>')
-
-fs.readFile(filename, function(err, content) {
-    
-    if(err){
-        console.error(err)
-    }
-
-    let dictionary = []
+    let dictionary = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<?xml-stylesheet type="text/xsl" href="style.xsl" ?>',
+        '<dictionary>'
+    ]
 
     const binaryContent = Buffer.from(content, 'binary')
 
@@ -31,18 +27,24 @@ fs.readFile(filename, function(err, content) {
         const buf = zlib.unzipSync( binaryDataBlock )
         let pos = 0
 
-        while(pos < buf.length){
+        while (pos < buf.length) {
             const chunksize = Buffer.from( buf.slice(pos, pos+4) ).readUInt32LE(0)
             pos += 4
             const entry = buf.slice( pos, pos + chunksize).toString("utf-8")
             const title = entry.match(/d:title="(.*?)"/)
-            dictionary.push( entry )
-            console.log(entry)
+
+            if (title[1] == searchWord) {
+                dictionary.push(entry)
+            }
+
             pos += chunksize
         }
-
     }
 
-    console.log("</dictionary>")
-    // console.log(dictionary)
-});
+    dictionary.push("</dictionary>")
+    return dictionary.join("")
+}
+
+module.exports = {
+    pochi
+}

@@ -47,27 +47,6 @@ const getSearchPhrase = () => {
 function activate(context) {
 	console.log('Congratulations, your extension "your-mac-dict" is now active!');
 
-	// let disposable = vscode.commands.registerCommand('extension.dict', function () {
-	// 	const word = getSearchPhrase()
-
-	// 	const pypath = path.resolve(__dirname, "hoge.py") 
-		
-	// 	// we will implementation on webView
-	// 	const cmd = ["python3", pypath, word].join(" ")
-
-	// 	let child
-	// 	try {
-	// 		child = execSync(cmd).toString()
-	// 	}catch(e){
-	// 		console.log(e)
-	// 	}
-
-	// 	vscode.window.showInformationMessage(child);
-	// });
-
-	// context.subscriptions.push(disposable);
-
-
 	context.subscriptions.push(
 		vscode.commands.registerCommand('extension.start', () => {
 			CatCodingPanel.createOrShow(context.extensionPath);
@@ -77,10 +56,7 @@ function activate(context) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('extension.doRefactor', () => {
 			if (CatCodingPanel.currentPanel) {
-				console.log(CatCodingPanel.currentPanel)
-				console.log("start")
 				CatCodingPanel.currentPanel.doRefactor()
-				console.log("end")
 			}
 		})
 	);
@@ -208,7 +184,7 @@ class CatCodingPanel {
 		const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
 		const nonce = getNonce()
 
-		let html = xsl.xsltproc()
+		let html = xsl.xsltproc( getSearchPhrase() )
 
 		// WebView とコミュニケーションをとるために <script> を埋め込む
 		let idx = html.search(/<\/body>/)

@@ -47,7 +47,7 @@
             {
                 "command": "YourMacDict.start",
                 "key": "ctrl+shift+d",
-                "mac": "shift+cmd+d",
+                "mac": "cmd+shift+d",
                 "when": "editorTextFocus"
 			}
 		],

@@ -48,7 +48,7 @@ function activate(context) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('YourMacDict.start', () => {
-			CatCodingPanel.createOrShow(context.extensionPath);
+			CatCodingPanel.createOrShow(context.extensionPath, getSearchPhrase());
 		})
 	);
 
@@ -65,7 +65,7 @@ function activate(context) {
 		vscode.window.registerWebviewPanelSerializer("YourMacDict", {
 			async deserializeWebviewPanel(webviewPanel, state) {
 				console.log(`Got state: ${state}`);
-				CatCodingPanel.revive(webviewPanel, context.extensionPath);
+				CatCodingPanel.revive(webviewPanel, context.extensionPath, "initial");
 			}
 		});
 	}
@@ -83,13 +83,14 @@ function deactivate() {}
 class CatCodingPanel {
 	static CurrentPanel = undefined
 
-	static createOrShow(extensionPath) {
+	static createOrShow(extensionPath, searchWord) {
 		const column = vscode.window.activeTextEditor
-			? vscode.window.activeTextEditor.viewColumn
-			: undefined;
+			? vscode.ViewColumn.Beside
+			: undefined
 
 		// If we already have a panel, show it.
 		if (CatCodingPanel.currentPanel) {
+			CatCodingPanel.currentPanel._update(searchWord)
 			CatCodingPanel.currentPanel._panel.reveal(column);
 			return;
 		}
@@ -108,43 +109,44 @@ class CatCodingPanel {
 			}
 		);
 
-		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath);
+		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath, searchWord)
 	}
 
-	static revive(panel, extensionPath) {
-		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath);
+	static revive(panel, extensionPath, searchWord) {
+		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath, searchWord)
 	}
 
-	constructor(panel, extensionPath) {
-		this._panel = panel;
-		this._extensionPath = extensionPath;
+	constructor(panel, extensionPath, searchWord) {
+		this._panel = panel
+		this._extensionPath = extensionPath
 		this._disposables = []
+		this._searchWord = searchWord
 		
 
 		// Set the webview's initial html content
-		this._update();
+		this._update()
 
 		// Listen for when the panel is disposed
 		// This happens when the user closes the panel or when the panel is closed programatically
-		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+		this._panel.onDidDispose(() => this.dispose(), null, this._disposables)
 
 		// Update the content based on view changes
 		this._panel.onDidChangeViewState( e => {
 			
 			if (this._panel.visible) {
-				this._update();
+				this._update()
 			}
 		}, null, this._disposables)
 
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage( message => {
-			vscode.window.showErrorMessage(message.text);
+			vscode.window.showErrorMessage(message.text)
 			switch (message.command) {
 				case 'alert':
-					vscode.window.showErrorMessage(message.text);
-					return;
+					vscode.window.showErrorMessage(message.text)
+					return
 			}
-		}, null, this._disposables );
+		}, null, this._disposables )
 	}
 
 	doRefactor() {
@@ -167,8 +169,10 @@ class CatCodingPanel {
 		}
 	}
 
-	_update() {
+	_update(searchWord) {
 		const webview = this._panel.webview;
+
+		if(searchWord)this._searchWord = searchWord
 
 		this._panel.title = "Your Mac Dict"
 		this._panel.webview.html = this._getHtml(webview);
@@ -184,7 +188,7 @@ class CatCodingPanel {
 		const nonce = getNonce()
 
 		try{
-			let html = xsl.xsltproc( getSearchPhrase() )
+			let html = xsl.xsltproc( this._searchWord )
 
 			// WebView とコミュニケーションをとるために <script> を埋め込む
 			let idx = html.search(/<\/body>/)

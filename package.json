@@ -34,13 +34,21 @@
 			},
 			{
 				"command": "YourMacDict.start",
-				"title": "Start cat coding session",
+				"title": "Search selected word on dictionary",
 				"category": "YourMacDict"
 			},
 			{
 				"command": "YourMacDict.doRefactor",
-				"title": "Do some refactoring",
+				"title": "future works",
 				"category": "YourMacDict"
+			}
+		],
+		"keybindings": [
+            {
+                "command": "YourMacDict.start",
+                "key": "ctrl+shift+d",
+                "mac": "shift+cmd+d",
+                "when": "editorTextFocus"
 			}
 		],
 		"configuration": {

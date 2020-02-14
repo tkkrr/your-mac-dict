@@ -260,6 +260,11 @@ class CatCodingPanel {
 			path.join(this._extensionPath, 'media', 'main.js')
 		);
 		const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
+		
+		const cssPathOnDisk = vscode.Uri.file(
+			path.join(this._extensionPath, 'media', 'style.css')
+		);
+		const cssUri = webview.asWebviewUri(cssPathOnDisk);
 		const nonce = getNonce()
 
 		try{
@@ -271,8 +276,8 @@ class CatCodingPanel {
 			
 			// To resolve "Content-Security-Policy"
 			idx = html.search(/<meta/)
-			html = html.slice(0, idx) + `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">` + html.slice(idx)
-
+			html = html.slice(0, idx) + `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}'; style-src ${webview.cspSource}"><link rel="stylesheet" type="text/css" href="${cssUri}">` + html.slice(idx)
+			
 			return html
 		}catch(e){
 			console.log(e)

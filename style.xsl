@@ -10,12 +10,7 @@
         </head>
         <body>
             <xsl:for-each select="d:entry">
-                <h1><xsl:value-of select="@d:title"/></h1>
-                <xsl:for-each select="span[ contains(@class, 'gramb x_xd0') ]" >
-                    <p>
-                        <xsl:value-of select="." />
-                    </p>
-                </xsl:for-each>
+                <xsl:copy-of select="."/>
             </xsl:for-each>
         </body>
     </html>

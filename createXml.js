@@ -1,19 +1,12 @@
 const fs = require('fs')
 const zlib = require('zlib')
-const vscode = require('vscode')
 
-const pochi = (searchWord) => {
-    const filename = vscode.workspace.getConfiguration("dictionary").PATH
+const pochi = (dictPath, searchWord) => {
+    const filename = dictPath
 
     const content = fs.readFileSync(filename)
-
-    let dictionary = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<?xml-stylesheet type="text/xsl" href="style.xsl" ?>',
-        '<dictionary>'
-    ]
-
     const binaryContent = Buffer.from(content, 'binary')
+    let entries = []
 
     let seeker = 0x40
     const limit = binaryContent.readInt32LE(seeker) + 0x40
@@ -34,14 +27,20 @@ const pochi = (searchWord) => {
             const title = entry.match(/d:title="(.*?)"/)
 
             if (title[1] == searchWord) {
-                dictionary.push(entry)
+                entries.push(entry)
             }
 
             pos += chunksize
         }
     }
 
-    dictionary.push("</dictionary>")
+    let dictionary = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<?xml-stylesheet type="text/xsl" href="style.xsl" ?>',
+        '<dictionary>',
+        entries,
+        "</dictionary>"
+    ]
     return dictionary.join("")
 }
 

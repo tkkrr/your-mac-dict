@@ -6,12 +6,13 @@ const vscode = require("vscode")
 const loadXml = require("./createXml").pochi
 
 
-const xsltproc = (searchWord) => {
+const xsltproc = (dictPath, searchWord) => {
+
+    console.log(dictPath, searchWord)
     const pathToXsl = `"${vscode.extensions.getExtension("tucker.your-mac-dict").extensionPath}/style.xsl"` 
-    console.log(pathToXsl)
 
     const tmpfile = tmp.fileSync()
-    fs.writeFileSync(tmpfile.name, loadXml(searchWord))
+    fs.writeFileSync(tmpfile.name, loadXml(dictPath ,searchWord))
     
     const cmd = ["xsltproc", pathToXsl, tmpfile.name].join(" ")
 

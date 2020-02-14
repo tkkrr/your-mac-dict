@@ -3,7 +3,7 @@
 	"displayName": "Your Mac Dict",
 	"description": "",
 	"publisher": "tucker",
-	"version": "0.0.4",
+	"version": "0.1.0",
 	"license": "https://github.com/tkkrr/your-mac-dict/blob/master/LICENSE",
 	"homepage": "https://github.com/tkkrr/your-mac-dict/blob/master/README.md",
 	"bugs": {
@@ -30,7 +30,8 @@
 		"commands": [
 			{
 				"command": "YourMacDict.dict",
-				"title": "dict"
+				"title": "Setting your dictionary (future work)",
+				"category": "YourMacDict"
 			},
 			{
 				"command": "YourMacDict.start",
@@ -44,24 +45,13 @@
 			}
 		],
 		"keybindings": [
-            {
-                "command": "YourMacDict.start",
-                "key": "ctrl+shift+d",
-                "mac": "cmd+shift+d",
-                "when": "editorTextFocus"
+			{
+				"command": "YourMacDict.start",
+				"key": "ctrl+shift+d",
+				"mac": "cmd+shift+d",
+				"when": "editorTextFocus"
 			}
-		],
-		"configuration": {
-			"title": "YourMacDict",
-			"properties": {
-				"dictionary.PATH": {
-					"type": "string",
-					"scope": "resource",
-					"default": "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX/7725cba5b321a8308a603a40ac808699175c4aae.asset/AssetData/Sanseido The WISDOM English-Japanese Japanese-English Dictionary.dictionary/Contents/Resources/Body.data",
-					"description": "You must setting path to dictionary"
-				}
-			}
-		}
+		]
 	},
 	"scripts": {
 		"lint": "eslint .",

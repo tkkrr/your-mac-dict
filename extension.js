@@ -1,5 +1,6 @@
 const vscode = require('vscode')
 const path = require('path')
+const fs = require('fs')
 
 const xsl = require('./xslt_process')
 
@@ -48,7 +49,45 @@ function activate(context) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('YourMacDict.start', () => {
-			CatCodingPanel.createOrShow(context.extensionPath, getSearchPhrase());
+			let dictPath = context.globalState.get("dictionary_path")
+			let isNeedUpdate = false
+			
+			try {
+				fs.accessSync(dictPath, fs.constants.F_OK)
+			} catch(e) {
+				isNeedUpdate = true
+			}
+
+			if (isNeedUpdate) {
+				let base = "/System/Library/Assets/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
+				try {
+					fs.accessSync(base, fs.constants.F_OK)
+				}catch(e){
+					console.log("This path is not found. Attach another path.")
+				}
+			
+				try {
+					base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
+					fs.accessSync(base, fs.constants.F_OK)
+				}catch(e){
+					console.log("This path is not found. Return to main task.")
+					console.log(e)
+					vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
+					return
+				}
+
+				const dire = fs.readdirSync(base, { withFileTypes: true })
+				const dictName = dire.filter(dirent => dirent.isDirectory())
+					.filter( (item) => {
+						const dictionaryName = fs.readdirSync(`${base}/${item.name}/AssetData`)[0]
+						return `${item.name}/AssetData/${dictionaryName}`.includes("Sanseido The WISDOM English-Japanese Japanese-English Dictionary")
+					})[0].name
+				dictPath = `${base}/${dictName}/AssetData/Sanseido The WISDOM English-Japanese Japanese-English Dictionary.dictionary/Contents/Resources/Body.data`
+				context.globalState.update("dictionary_path", dictPath)
+				
+			}
+
+			CatCodingPanel.createOrShow(context.extensionPath, dictPath, getSearchPhrase());
 		})
 	);
 
@@ -65,12 +104,48 @@ function activate(context) {
 		vscode.window.registerWebviewPanelSerializer("YourMacDict", {
 			async deserializeWebviewPanel(webviewPanel, state) {
 				console.log(`Got state: ${state}`);
-				CatCodingPanel.revive(webviewPanel, context.extensionPath, "initial");
+				CatCodingPanel.revive(webviewPanel, context.extensionPath, context.globalState.get("dictionary_path"), "initial");
 			}
 		});
 	}
 
+	context.subscriptions.push(
+		vscode.commands.registerCommand('YourMacDict.dict', async () => {
+
+			let base = "/System/Library/Assets/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
+			try {
+				fs.accessSync(base, fs.constants.F_OK)
+			}catch(e){
+				console.log("This path is not found. Attach another path.")
+			}
 		
+			try {
+				base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
+				fs.accessSync(base, fs.constants.F_OK)
+			}catch(e){
+				console.log("This path is not found. Return to main task.")
+				console.log(e)
+				vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
+				return
+			}
+
+			const dire = fs.readdirSync(base, { withFileTypes: true })
+			const fileNames = dire.filter(dirent => dirent.isDirectory())
+				.map( (item) => {
+					const dictionaryName = fs.readdirSync(`${base}/${item.name}/AssetData`)[0]
+					return `${item.name}/AssetData/${dictionaryName}`
+				})
+
+			const result = await vscode.window.showQuickPick( fileNames.map(item => path.basename(item, ".dictionary")), {
+				placeHolder: 'Please selected your dictionary',
+			})
+
+			const dictionaryPath = fileNames.filter(item => item.includes(result))[0]
+			context.globalState.update("dictionary_path", `${base}/${dictionaryPath}/Contents/Resources/Body.data`)
+			vscode.window.showInformationMessage(`Complete your setting!\nYour Mac Dict is ${result}!!`)
+		})
+	)
+
 }
 exports.activate = activate;
 
@@ -83,7 +158,7 @@ function deactivate() {}
 class CatCodingPanel {
 	static CurrentPanel = undefined
 
-	static createOrShow(extensionPath, searchWord) {
+	static createOrShow(extensionPath, dictPath, searchWord) {
 		const column = vscode.window.activeTextEditor
 			? vscode.ViewColumn.Beside
 			: undefined
@@ -109,18 +184,19 @@ class CatCodingPanel {
 			}
 		);
 
-		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath, searchWord)
+		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath, dictPath, searchWord)
 	}
 
-	static revive(panel, extensionPath, searchWord) {
-		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath, searchWord)
+	static revive(panel, extensionPath, dictPath, searchWord) {
+		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath, dictPath, searchWord)
 	}
 
-	constructor(panel, extensionPath, searchWord) {
+	constructor(panel, extensionPath, dictPath, searchWord) {
 		this._panel = panel
 		this._extensionPath = extensionPath
 		this._disposables = []
 		this._searchWord = searchWord
+		this._dictPath = dictPath
 		
 
 		// Set the webview's initial html content
@@ -188,7 +264,7 @@ class CatCodingPanel {
 		const nonce = getNonce()
 
 		try{
-			let html = xsl.xsltproc( this._searchWord )
+			let html = xsl.xsltproc( this._dictPath, this._searchWord )
 
 			// WebView とコミュニケーションをとるために <script> を埋め込む
 			let idx = html.search(/<\/body>/)

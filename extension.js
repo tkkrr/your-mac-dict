@@ -64,16 +64,15 @@ function activate(context) {
 					fs.accessSync(base, fs.constants.F_OK)
 				}catch(e){
 					console.log("This path is not found. Attach another path.")
-				}
-			
-				try {
-					base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
-					fs.accessSync(base, fs.constants.F_OK)
-				}catch(e){
-					console.log("This path is not found. Return to main task.")
-					console.log(e)
-					vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
-					return
+					try {
+						base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
+						fs.accessSync(base, fs.constants.F_OK)
+					}catch(e){
+						console.log("This path is not found. Return to main task.")
+						console.log(e)
+						vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
+						return
+					}
 				}
 
 				const dire = fs.readdirSync(base, { withFileTypes: true })

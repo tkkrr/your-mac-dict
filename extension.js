@@ -2,7 +2,7 @@ const vscode = require('vscode')
 const path = require('path')
 const fs = require('fs')
 
-const xsl = require('./xslt_process')
+const xsl = require('./createHtml')
 
 
 const getSearchPhrase = () => {
@@ -268,7 +268,7 @@ class CatCodingPanel {
 		const nonce = getNonce()
 
 		try{
-			let html = xsl.xsltproc( this._dictPath, this._searchWord )
+			let html = xsl.pochi( this._dictPath, this._searchWord )
 
 			// WebView とコミュニケーションをとるために <script> を埋め込む
 			let idx = html.search(/<\/body>/)

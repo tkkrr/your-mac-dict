@@ -23,10 +23,13 @@ const pochi = (dictPath, searchWord) => {
         while (pos < buf.length) {
             const chunksize = Buffer.from( buf.slice(pos, pos+4) ).readUInt32LE(0)
             pos += 4
-            const entry = buf.slice( pos, pos + chunksize).toString("utf-8")
+            // Tips: 最長の単語は「セントビンセントおよびグレナディーンしょとう」
+            //       この単語は最低でも 91--168bytes 読む必要がある．
+            //       辞書の更新を考慮して多めに 80--200Bytes 読んでいる
+            let entry = buf.slice( pos+80, pos + 200).toString("utf-8")
             const title = entry.match(/d:title="(.*?)"/)
-
             if (title[1] == searchWord) {
+                entry = buf.slice( pos, pos + chunksize).toString("utf-8")
                 entries.push(entry)
             }
 
@@ -35,11 +38,17 @@ const pochi = (dictPath, searchWord) => {
     }
 
     let dictionary = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<?xml-stylesheet type="text/xsl" href="style.xsl" ?>',
-        '<dictionary>',
+        '<html lang="en">',
+        '<head>',
+        '<meta charset="UTF-8"/>',
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0"/>',
+        '<title>Your Mac Dict</title>',
+        '</head>',
+        '<html>',
+        '<body>',
         entries,
-        "</dictionary>"
+        '</body>',
+        "</html>"
     ]
     return dictionary.join("")
 }

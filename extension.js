@@ -6,38 +6,16 @@ const xsl = require('./createHtml')
 
 
 const getSearchPhrase = () => {
-	const editor = vscode.window.activeTextEditor;
-	if (!editor) return null;
-	const text = editor.document.getText();
-	if (!text) return null;
-	let selStart, selEnd;
+	const editor = vscode.window.activeTextEditor
+    const selection = editor.selection
+    let text = editor.document.getText(selection)
 
-	if (editor.selection.isEmpty) {
-		selStart = editor.document.offsetAt(editor.selection.anchor);
-		// the next or previous character at the caret must be a word character
-		let i = selStart - 1;
-		if (!((i < text.length - 1 && /\w/.test(text[i + 1])) || (i > 0 && /\w/.test(text[i]))))
-			return null;
-		for (; i >= 0; i--) {
-			if (!/\w/.test(text[i])) break;
-		}
-		if (i < 0) i = 0;
-		for (; i < text.length; i++) {
-			if (/\w/.test(text[i])) break;
-		}
-		const wordMatch = text.slice(i).match(/^\w+/);
-		selStart = i;
-		selEnd = selStart + (wordMatch ? wordMatch[0].length : 0);
-	} else {
-		selStart = editor.document.offsetAt(editor.selection.start);
-		selEnd = editor.document.offsetAt(editor.selection.end);
-	}
+    if (!text) {
+        const range = editor.document.getWordRangeAtPosition(selection.active)
+        text = editor.document.getText(range)
+    }
 
-	let phrase = text.slice(selStart, selEnd).trim();
-	phrase = phrase.replace(/\s\s+/g,' ');
-	// limit the maximum searchable length to 100 characters
-	phrase = phrase.slice(0, 100).trim();
-	return phrase;
+    return text;
 }
 
 

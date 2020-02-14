@@ -28,7 +28,10 @@ const pochi = (dictPath, searchWord) => {
             //       辞書の更新を考慮して多めに 80--200Bytes 読んでいる
             let entry = buf.slice( pos+80, pos + 200).toString("utf-8")
             const title = entry.match(/d:title="(.*?)"/)
+            // let entry = buf.slice( pos, pos + chunksize).toString("utf-8")
+            // const title = entry.match(new RegExp(`${searchWord}`))
             if (title[1] == searchWord) {
+                // console.log(entry.match(/d:title="(.*?)"/)[1])
                 entry = buf.slice( pos, pos + chunksize).toString("utf-8")
                 entries.push(entry)
             }

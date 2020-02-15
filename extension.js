@@ -209,7 +209,7 @@ class CatCodingPanel {
 	}
 
 	dispose() {
-		CatCodingPanel.currentPanel = undefined;
+		CatCodingPanel.CurrentPanel = undefined;
 
 		// Clean up our resources
 		this._panel.dispose();

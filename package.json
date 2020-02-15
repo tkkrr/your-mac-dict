@@ -1,9 +1,10 @@
 {
 	"name": "your-mac-dict",
 	"displayName": "Your Mac Dict",
-	"description": "",
+	"description": "You can use build-in Dictionary on VScode.",
 	"publisher": "tucker",
 	"version": "0.2.0",
+	"icon": "icon_ymd.png",
 	"license": "https://github.com/tkkrr/your-mac-dict/blob/master/LICENSE",
 	"homepage": "https://github.com/tkkrr/your-mac-dict/blob/master/README.md",
 	"bugs": {

@@ -239,10 +239,6 @@ class CatCodingPanel {
 		);
 		const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
 		
-		const cssPathOnDisk = vscode.Uri.file(
-			path.join(this._extensionPath, 'media', 'style.css')
-		);
-		const cssUri = webview.asWebviewUri(cssPathOnDisk);
 		const nonce = getNonce()
 
 		try{
@@ -252,9 +248,19 @@ class CatCodingPanel {
 			let idx = html.search(/<\/body>/)
 			html = html.slice(0, idx) + `<script nonce="${nonce}" src="${scriptUri}"></script>` + html.slice(idx)
 			
+			// Attaced Apple like style
+			let styles = fs.readFileSync( path.resolve( path.dirname(this._dictPath), "DefaultStyle.css"), "utf8" )
+			styles = styles.replace(/color: text/g, "color:whitesmoke")
+			styles = styles.replace(/-webkit-link/g, "lightskyblue")
+			styles = styles.replace(/-apple-system-secondary-label/g, "grey")
+			styles = styles.replace(/-apple-system-tertiary-label/g, "dimgrey")
+			styles = styles.replace(/-apple-system-text-background/g, "black")
+			idx = html.search(/<\/head>/)
+			html = html.slice(0, idx) + `<style nonce=${nonce}>${styles}</style>` + html.slice(idx)
+
 			// To resolve "Content-Security-Policy"
 			idx = html.search(/<meta/)
-			html = html.slice(0, idx) + `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}'; style-src ${webview.cspSource}"><link rel="stylesheet" type="text/css" href="${cssUri}">` + html.slice(idx)
+			html = html.slice(0, idx) + `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}'">` + html.slice(idx)
 			
 			return html
 		}catch(e){

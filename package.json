@@ -3,7 +3,7 @@
 	"displayName": "Your Mac Dict",
 	"description": "",
 	"publisher": "tucker",
-	"version": "0.1.2",
+	"version": "0.2.0",
 	"license": "https://github.com/tkkrr/your-mac-dict/blob/master/LICENSE.txt",
 	"homepage": "https://github.com/tkkrr/your-mac-dict/blob/master/README.md",
 	"bugs": {
@@ -30,7 +30,7 @@
 		"commands": [
 			{
 				"command": "YourMacDict.dict",
-				"title": "Setting your dictionary (future work)",
+				"title": "Change your dictionary",
 				"category": "YourMacDict"
 			},
 			{
@@ -40,7 +40,7 @@
 			},
 			{
 				"command": "YourMacDict.doRefactor",
-				"title": "future works",
+				"title": "(future works)",
 				"category": "YourMacDict"
 			}
 		],

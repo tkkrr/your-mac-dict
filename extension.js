@@ -28,15 +28,12 @@ function activate(context) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('YourMacDict.start', () => {
 			let dictPath = context.globalState.get("dictionary_path")
-			let isNeedUpdate = false
 			
 			try {
 				fs.accessSync(dictPath, fs.constants.F_OK)
 			} catch(e) {
-				isNeedUpdate = true
-			}
-
-			if (isNeedUpdate) {
+				// Needs to update the dictionary path.
+				// HERE! we change to Japanese-English English-Japanese dictionary as default.
 				let base = "/System/Library/Assets/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
 				try {
 					fs.accessSync(base, fs.constants.F_OK)
@@ -70,8 +67,8 @@ function activate(context) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('YourMacDict.doRefactor', () => {
-			if (CatCodingPanel.currentPanel) {
-				CatCodingPanel.currentPanel.doRefactor()
+			if (CatCodingPanel.CurrentPanel) {
+				CatCodingPanel.CurrentPanel.doRefactor()
 			}
 		})
 	);
@@ -141,9 +138,11 @@ class CatCodingPanel {
 			: undefined
 
 		// If we already have a panel, show it.
-		if (CatCodingPanel.currentPanel) {
-			CatCodingPanel.currentPanel._update(searchWord)
-			CatCodingPanel.currentPanel._panel.reveal(column);
+		if (CatCodingPanel.CurrentPanel) {
+			CatCodingPanel.CurrentPanel._dictPath = dictPath
+			CatCodingPanel.CurrentPanel._searchWord = searchWord
+			CatCodingPanel.CurrentPanel._update()
+			CatCodingPanel.CurrentPanel._panel.reveal(column)
 			return;
 		}
 
@@ -161,11 +160,11 @@ class CatCodingPanel {
 			}
 		);
 
-		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath, dictPath, searchWord)
+		CatCodingPanel.CurrentPanel = new CatCodingPanel(panel, extensionPath, dictPath, searchWord)
 	}
 
 	static revive(panel, extensionPath, dictPath, searchWord) {
-		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath, dictPath, searchWord)
+		CatCodingPanel.CurrentPanel = new CatCodingPanel(panel, extensionPath, dictPath, searchWord)
 	}
 
 	constructor(panel, extensionPath, dictPath, searchWord) {
@@ -222,10 +221,8 @@ class CatCodingPanel {
 		}
 	}
 
-	_update(searchWord) {
+	_update() {
 		const webview = this._panel.webview;
-
-		if(searchWord)this._searchWord = searchWord
 
 		this._panel.title = "Your Mac Dict"
 		this._panel.webview.html = this._getHtml(webview);
@@ -250,6 +247,7 @@ class CatCodingPanel {
 			
 			// Attaced Apple like style
 			let styles = fs.readFileSync( path.resolve( path.dirname(this._dictPath), "DefaultStyle.css"), "utf8" )
+			styles = styles.replace("font-size: 12pt", "font-size: 16pt")
 			styles = styles.replace(/color: text/g, "color:whitesmoke")
 			styles = styles.replace(/-webkit-link/g, "lightskyblue")
 			styles = styles.replace(/-apple-system-secondary-label/g, "grey")

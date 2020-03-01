@@ -40,13 +40,19 @@ function activate(context) {
 				}catch(e){
 					console.log("This path is not found. Attach another path.")
 					try {
-						base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
+						base = "/System/Library/AssetsV2/PreinstalledAssetsV2/InstallWithOs/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
 						fs.accessSync(base, fs.constants.F_OK)
 					}catch(e){
-						console.log("This path is not found. Return to main task.")
-						console.log(e)
-						vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
-						return
+						console.log("This path is not found. Attach another path.")
+						try {
+							base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
+							fs.accessSync(base, fs.constants.F_OK)
+						} catch (e) {
+							console.log("This path is not found. Return to main task.")
+							console.log(e)
+							vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
+							return
+						}
 					}
 				}
 
@@ -92,13 +98,19 @@ function activate(context) {
 			}catch(e){
 				console.log("This path is not found. Attach another path.")
 				try {
-					base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
+					base = "/System/Library/AssetsV2/PreinstalledAssetsV2/InstallWithOs/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
 					fs.accessSync(base, fs.constants.F_OK)
 				}catch(e){
-					console.log("This path is not found. Return to main task.")
-					console.log(e)
-					vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
-					return
+					console.log("This path is not found. Attach another path.")
+					try {
+						base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
+						fs.accessSync(base, fs.constants.F_OK)
+					} catch (e) {
+						console.log("This path is not found. Return to main task.")
+						console.log(e)
+						vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
+						return
+					}
 				}
 			}
 		

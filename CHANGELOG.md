@@ -4,6 +4,11 @@ All notable changes to the "your-mac-dict" extension will be documented in this 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.2.3] 2021-11-24
+### Fixed
+- Removed some bugs.
+- Confirmed: MacBook Air 2020 (intel, MacOS 12.0.1)
+
 ## [0.2.1] 2020-02-15
 ### Fixed
 - Removed some bugs.

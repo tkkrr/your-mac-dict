@@ -67,14 +67,14 @@ function activate(context) {
 				
 			}
 
-			CatCodingPanel.createOrShow(context.extensionPath, dictPath, getSearchPhrase());
+			ResultPanel.createOrShow(context.extensionPath, dictPath, getSearchPhrase());
 		})
 	);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('YourMacDict.doRefactor', () => {
-			if (CatCodingPanel.CurrentPanel) {
-				CatCodingPanel.CurrentPanel.doRefactor()
+			if (ResultPanel.CurrentPanel) {
+				ResultPanel.CurrentPanel.doRefactor()
 			}
 		})
 	);
@@ -84,7 +84,7 @@ function activate(context) {
 		vscode.window.registerWebviewPanelSerializer("YourMacDict", {
 			async deserializeWebviewPanel(webviewPanel, state) {
 				console.log(`Got state: ${state}`);
-				CatCodingPanel.revive(webviewPanel, context.extensionPath, context.globalState.get("dictionary_path"), "initial");
+				ResultPanel.revive(webviewPanel, context.extensionPath, context.globalState.get("dictionary_path"), "initial");
 			}
 		});
 	}
@@ -139,9 +139,9 @@ function deactivate() {}
 
 
 /**
- * Manages cat coding webview panels
+ * Manages webview panels
  */
-class CatCodingPanel {
+class ResultPanel {
 	static CurrentPanel = undefined
 
 	static createOrShow(extensionPath, dictPath, searchWord) {
@@ -150,11 +150,11 @@ class CatCodingPanel {
 			: undefined
 
 		// If we already have a panel, show it.
-		if (CatCodingPanel.CurrentPanel) {
-			CatCodingPanel.CurrentPanel._dictPath = dictPath
-			CatCodingPanel.CurrentPanel._searchWord = searchWord
-			CatCodingPanel.CurrentPanel._update()
-			CatCodingPanel.CurrentPanel._panel.reveal(column)
+		if (ResultPanel.CurrentPanel) {
+			ResultPanel.CurrentPanel._dictPath = dictPath
+			ResultPanel.CurrentPanel._searchWord = searchWord
+			ResultPanel.CurrentPanel._update()
+			ResultPanel.CurrentPanel._panel.reveal(column)
 			return;
 		}
 
@@ -172,11 +172,11 @@ class CatCodingPanel {
 			}
 		);
 
-		CatCodingPanel.CurrentPanel = new CatCodingPanel(panel, extensionPath, dictPath, searchWord)
+		ResultPanel.CurrentPanel = new ResultPanel(panel, extensionPath, dictPath, searchWord)
 	}
 
 	static revive(panel, extensionPath, dictPath, searchWord) {
-		CatCodingPanel.CurrentPanel = new CatCodingPanel(panel, extensionPath, dictPath, searchWord)
+		ResultPanel.CurrentPanel = new ResultPanel(panel, extensionPath, dictPath, searchWord)
 	}
 
 	constructor(panel, extensionPath, dictPath, searchWord) {
@@ -220,7 +220,7 @@ class CatCodingPanel {
 	}
 
 	dispose() {
-		CatCodingPanel.CurrentPanel = undefined;
+		ResultPanel.CurrentPanel = undefined;
 
 		// Clean up our resources
 		this._panel.dispose();

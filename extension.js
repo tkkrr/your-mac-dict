@@ -25,6 +25,18 @@ const getSearchPhrase = () => {
 function activate(context) {
 	console.log('Congratulations, your extension "your-mac-dict" is now active!');
 
+	/// 0. List dictionay file path
+	const bases = [
+		// Confirmed: MBP13(L15, 10.14.6)
+		"/System/Library/Assets/com_apple_MobileAsset_DictionaryServices_dictionaryOSX",
+
+		// Confirmed: MBP16(L19, 10.15.7)
+		"/System/Library/AssetsV2/PreinstalledAssetsV2/InstallWithOs/com_apple_MobileAsset_DictionaryServices_dictionaryOSX",
+
+		// Confirmed: MBA13(E20, 12.0.1)
+		"/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX",
+	]
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand('YourMacDict.start', () => {
 			let dictPath = context.globalState.get("dictionary_path")
@@ -34,36 +46,43 @@ function activate(context) {
 			} catch(e) {
 				// Needs to update the dictionary path.
 				// HERE! we change to Japanese-English English-Japanese dictionary as default.
-				let base = "/System/Library/Assets/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
-				try {
-					fs.accessSync(base, fs.constants.F_OK)
-				}catch(e){
-					console.log("This path is not found. Attach another path.")
-					try {
-						base = "/System/Library/AssetsV2/PreinstalledAssetsV2/InstallWithOs/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
-						fs.accessSync(base, fs.constants.F_OK)
-					}catch(e){
-						console.log("This path is not found. Attach another path.")
-						try {
-							base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
-							fs.accessSync(base, fs.constants.F_OK)
-						} catch (e) {
-							console.log("This path is not found. Return to main task.")
-							console.log(e)
-							vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
-							return
-						}
-					}
-				}
 
-				const dire = fs.readdirSync(base, { withFileTypes: true })
-				const dictName = dire.filter(dirent => dirent.isDirectory())
-					.filter( (item) => {
-						const dictionaryName = fs.readdirSync(`${base}/${item.name}/AssetData`)[0]
-						return `${item.name}/AssetData/${dictionaryName}`.includes("Sanseido The WISDOM English-Japanese Japanese-English Dictionary")
-					})[0].name
-				dictPath = `${base}/${dictName}/AssetData/Sanseido The WISDOM English-Japanese Japanese-English Dictionary.dictionary/Contents/Resources/Body.data`
-				context.globalState.update("dictionary_path", dictPath)
+				/// 1. Check path exists.
+				let passPath = []
+	
+				bases.forEach((base, idx) => {
+					try {
+						fs.accessSync(base, fs.constants.F_OK)
+						passPath.push(base)
+					}catch(e){
+						console.log(`Path of bases[${idx}] is not found.`)
+					}
+				})
+	
+				if (passPath.length === 0) {
+					// Cannot get Dict path. 
+					// Please tell me your environment (Mac Model & MacOS Version) on issue.
+					// ref: https://github.com/tkkrr/your-mac-dict/issues
+					vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`)
+					return
+				}
+	
+				/// 2. Extract Japanese-English English-Japanese dictionary
+				let dictName = passPath.reduce( (prev, path) => {
+					if (prev) return prev
+					const dire = fs.readdirSync(path, { withFileTypes: true })
+					const dicts = dire.filter(dirent => dirent.isDirectory())
+						.map( (item) => {
+							const dictionaryName = fs.readdirSync(`${path}/${item.name}/AssetData`)[0]
+							if(dictionaryName.includes("Sanseido The WISDOM English-Japanese Japanese-English Dictionary"))
+								return `${path}/${item.name}/AssetData/${dictionaryName}`
+						})
+					if (dicts.length > 0) return dicts[0]
+				}, "")
+
+				console.log(dictName)
+
+				context.globalState.update("dictionary_path", `${dictName}/Contents/Resources/Body.data`)
 				
 			}
 
@@ -92,42 +111,46 @@ function activate(context) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('YourMacDict.dict', async () => {
 
-			let base = "/System/Library/Assets/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
-			try {
-				fs.accessSync(base, fs.constants.F_OK)
-			}catch(e){
-				console.log("This path is not found. Attach another path.")
+			/// 1. Check path exists.
+			let passPath = []
+
+			bases.forEach((base, idx) => {
 				try {
-					base = "/System/Library/AssetsV2/PreinstalledAssetsV2/InstallWithOs/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
 					fs.accessSync(base, fs.constants.F_OK)
+					passPath.push(base)
 				}catch(e){
-					console.log("This path is not found. Attach another path.")
-					try {
-						base = "/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX"
-						fs.accessSync(base, fs.constants.F_OK)
-					} catch (e) {
-						console.log("This path is not found. Return to main task.")
-						console.log(e)
-						vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`);
-						return
-					}
+					console.log(`Path of bases[${idx}] is not found.`)
 				}
+			})
+
+			if (passPath.length === 0) {
+				// Cannot get Dict path. 
+				// Please tell me your environment (Mac Model & MacOS Version) on issue.
+				// ref: https://github.com/tkkrr/your-mac-dict/issues
+				vscode.window.showInformationMessage(`Sorry, you don't have dictionary on your Mac.`)
+				return
 			}
-		
 
-			const dire = fs.readdirSync(base, { withFileTypes: true })
-			const fileNames = dire.filter(dirent => dirent.isDirectory())
-				.map( (item) => {
-					const dictionaryName = fs.readdirSync(`${base}/${item.name}/AssetData`)[0]
-					return `${item.name}/AssetData/${dictionaryName}`
-				})
+			/// 2. Extract dictionary list
+			let fileNames = []
+			passPath.forEach(path => {
+				const dire = fs.readdirSync(path, { withFileTypes: true })
+				fileNames = [...fileNames, 
+					...dire.filter(dirent => dirent.isDirectory())
+						.map( (item) => {
+							const dictionaryName = fs.readdirSync(`${path}/${item.name}/AssetData`)[0]
+							return `${path}/${item.name}/AssetData/${dictionaryName}`
+						})
+					]
+			})
 
+			/// 3. Ask which dictionary to use
 			const result = await vscode.window.showQuickPick( fileNames.map(item => path.basename(item, ".dictionary")), {
 				placeHolder: 'Please selected your dictionary',
 			})
 
 			const dictionaryPath = fileNames.filter(item => item.includes(result))[0]
-			context.globalState.update("dictionary_path", `${base}/${dictionaryPath}/Contents/Resources/Body.data`)
+			context.globalState.update("dictionary_path", `${dictionaryPath}/Contents/Resources/Body.data`)
 			vscode.window.showInformationMessage(`Complete your setting!\nYour Mac Dict is ${result}!!`)
 		})
 	)

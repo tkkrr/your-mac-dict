@@ -3,7 +3,7 @@
 	"displayName": "Your Mac Dict",
 	"description": "You can use build-in Dictionary on VScode.",
 	"publisher": "tucker",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"icon": "icon_ymd.png",
 	"license": "https://github.com/tkkrr/your-mac-dict/blob/master/LICENSE",
 	"homepage": "https://github.com/tkkrr/your-mac-dict/blob/master/README.md",
@@ -60,14 +60,14 @@
 		"test": "node ./test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/glob": "^7.1.1",
-		"@types/mocha": "^7.0.1",
-		"@types/node": "^12.11.7",
-		"@types/vscode": "^1.41.0",
-		"eslint": "^6.8.0",
-		"glob": "^7.1.6",
-		"mocha": "^7.0.1",
-		"typescript": "^3.7.5",
-		"vscode-test": "^1.3.0"
+		"@types/glob": "^7.2.0",
+		"@types/mocha": "^9.0.0",
+		"@types/node": "^16.11.9",
+		"@types/vscode": "^1.62.0",
+		"eslint": "^8.3.0",
+		"glob": "^7.2.0",
+		"mocha": "^9.1.3",
+		"typescript": "^4.5.2",
+		"vscode-test": "^1.6.1"
 	}
 }
